@@ -16,7 +16,25 @@
 
 package spray
 
+import scala.json.ast._
+import collection.immutable
+
 package object json {
+
+  type JsValue = JValue
+  type JsString = JString
+  val JsString = JString
+  val JsNull = JNull
+  type JsNumber = JNumber
+  val JsNumber = JNumber
+  type JsArray = JArray
+  val JsArray = JArray
+  type JsObject = JObject
+  val JsObject = JObject
+  type JsBoolean = JBoolean
+  val JsBoolean = JBoolean
+  val JsTrue = JTrue
+  val JsFalse = JFalse
 
   type JsField = (String, JsValue)
 
@@ -28,6 +46,40 @@ package object json {
   
   implicit def pimpAny[T](any: T) = new PimpedAny(any)
   implicit def pimpString(string: String) = new PimpedString(string)
+
+  implicit class jValueHelper(jsValue: JsValue) {
+    override def toString = compactPrint
+    def toString(printer: (JsValue => String)) = printer(jsValue)
+    def compactPrint = CompactPrinter(jsValue)
+    def prettyPrint = PrettyPrinter(jsValue)
+    def convertTo[T :JsonReader]: T = jsonReader[T].read(jsValue)
+
+    def asJsObject(errorMsg: String = "JSON object expected"): JsObject = deserializationError(errorMsg)
+
+    def asJsObject: JsObject = asJsObject()
+  }
+
+  implicit class jObjectHelper(jsObject: JsObject) {
+    def asJsObject(errorMsg: String) = jsObject
+    def getFields(fieldNames: String*): immutable.Seq[JsValue] = fieldNames.flatMap(jsObject.value.get)(collection.breakOut)
+  }
+
+  implicit class jObjectObjectHelper(jsObject: JsObject.type) {
+    val empty = JsObject()
+  }
+
+  implicit class jNumberObjectHelper(jsNumber: JsNumber.type) {
+    val zero: JsNumber = JsNumber(0)
+  }
+
+  implicit class jStringObjectHelper(jString: JsString.type) {
+    val empty = JsString("")
+  }
+
+  implicit class jArrayObjectHelper(jsArray: JsArray.type) {
+    val empty = JsArray()
+  }
+
 }
 
 package json {

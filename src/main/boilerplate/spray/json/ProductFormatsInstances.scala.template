@@ -25,11 +25,11 @@ trait ProductFormatsInstances { self: ProductFormats with StandardFormats =>
   }
   def jsonFormat[[#P1 :JF#], T <: Product](construct: ([#P1#]) => T, [#fieldName1: String#]): RootJsonFormat[T] = new RootJsonFormat[T]{
     def write(p: T) = {
-      val fields = new collection.mutable.ListBuffer[(String, JsValue)]
+      val fields = new collection.mutable.HashMap[String, JsValue]
       fields.sizeHint(1 * 2)
       [#fields ++= productElement##2Field[P1](fieldName1, p, 0)#
       ]
-      JsObject(fields: _*)
+      JsObject(fields.toMap)
     }
     def read(value: JsValue) = {
       [#val p1V = fromField[P1](value, fieldName1)#

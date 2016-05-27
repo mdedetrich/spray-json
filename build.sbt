@@ -21,6 +21,7 @@ scalacOptions ++= Seq("-feature", "-language:_", "-unchecked", "-deprecation", "
 resolvers += Opts.resolver.sonatypeReleases
 
 libraryDependencies ++= Seq(
+  "org.mdedetrich" %% "scala-json-ast" % "1.0.0-M1",
   "org.specs2" %% "specs2-core" % "3.7.1" % "test",
   "org.specs2" %% "specs2-scalacheck" % "3.7.1" % "test",
   "org.scalacheck" %% "scalacheck" % "1.12.5" % "test"

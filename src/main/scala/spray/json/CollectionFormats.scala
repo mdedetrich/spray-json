@@ -55,7 +55,7 @@ trait CollectionFormats {
       }
     }
     def read(value: JsValue) = value match {
-      case x: JsObject => x.fields.map { field =>
+      case x: JsObject => x.value.map { field =>
         (JsString(field._1).convertTo[K], field._2.convertTo[V])
       } (collection.breakOut)
       case x => deserializationError("Expected Map as JsObject, but got " + x)

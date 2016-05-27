@@ -51,10 +51,10 @@ trait ProductFormats extends ProductFormatsInstances {
                                      (implicit reader: JsonReader[T]) = value match {
     case x: JsObject if
       (reader.isInstanceOf[OptionFormat[_]] &
-        !x.fields.contains(fieldName)) =>
+        !x.value.contains(fieldName)) =>
       None.asInstanceOf[T]
     case x: JsObject =>
-      try reader.read(x.fields(fieldName))
+      try reader.read(x.value(fieldName))
       catch {
         case e: NoSuchElementException =>
           deserializationError("Object is missing required member '" + fieldName + "'", e, fieldName :: Nil)
